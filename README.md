@@ -1,63 +1,74 @@
-# 命运回响
+# 命运回响 · 本地前后端版说明
 
-一个基于 Streamlit 的互动式现实人生模拟工具。用户会从小学、初中、高考、大学走到初入社会，在关键节点做选择，最终生成需求、受伤线索、决策风格和结局报告。
+这个版本是在原 Python 版基础上新增的完整本地运行项目。
 
-## 给普通用户：最少操作运行
+## 它解决什么问题
 
-双击 `一键启动.bat`。
+原来的 Streamlit 版适合快速做文本原型，纯网页离线版适合没有环境配置能力的用户直接打开。  
+本地前后端版介于两者之间：
 
-首次运行会自动创建 `.venv` 本地环境并安装依赖。之后再次双击会直接启动。浏览器会打开 `http://localhost:8501`。
+- 前端是浏览器网页
+- 后端是 Python FastAPI
+- 剧情、随机事件和大模型调用都放在后端
+- API Key 不直接写进前端 JS
+- 适合继续开发成更成熟的本地产品
 
-如果提示未检测到 Python，请先看 `安装说明.md`。
+## 怎么启动
 
-## 给完全不想配置环境的用户
+双击：
 
-如果你希望对方电脑上不安装 Python、不打开命令行、不手动安装依赖，请先在你自己的电脑上双击：
-
-`一键打包EXE.bat`
-
-打包完成后，把 `dist\命运回响` 整个文件夹发给对方。对方打开该文件夹里的 `命运回响.exe` 即可启动。
-
-注意：Streamlit 是本地网页应用，exe 启动后仍会打开浏览器页面，这是正常行为。
-
-## 给分发者
-
-如果对方电脑有 Python，把整个文件夹发给对方即可，至少包含：
-
-- `app.py`
-- `requirements.txt`
-- `一键启动.bat`
-- `launcher.py`
-- `life_echo.py`
-- `README.md`
-- `安装说明.md`
-
-不建议只发单个 `app.py`，因为普通用户需要启动脚本和依赖说明。
-
-## 给开发者
-
-运行：
-
-```powershell
-pip install -r requirements.txt
-streamlit run app.py
+```text
+一键启动前后端版.bat
 ```
 
-作为模块复用：
+启动后打开：
 
-```python
-import life_echo
-
-state = life_echo.create_initial_state()
-node = life_echo.get_current_node(state)
-choices = life_echo.get_available_choices(node, state)
-state = life_echo.choose(state, choices[0][0])
+```text
+http://127.0.0.1:8787
 ```
 
-## 数据保存
+## 主要功能
 
-存档默认写入项目目录下的 `life_sim_data`。如果目录不可写，会自动保存到用户目录下的 `.life_sim_data`。
+- 开局选择人设模板
+- 自定义人设
+- 不同随机性强度
+- 每章随机状态事件
+- 本地动态选项
+- AI 优化人设
+- AI 生成额外选择
+- 完整终局报告
 
-## 产品边界
+## AI 怎么配置
 
-本项目是互动叙事和自我觉察工具，不提供医学诊断、心理疾病判断、危机干预
+进入页面右上角 `AI 设置`。
+
+DeepSeek 可用：
+
+```text
+接口地址：https://api.deepseek.com/chat/completions
+模型：deepseek-chat
+```
+
+填入自己的 API Key 后点击保存。
+
+配置会保存到：
+
+```text
+life_sim_data/ai_config.json
+```
+
+注意：
+
+- 不要把带真实 Key 的 `ai_config.json` 发给别人。
+- 如果 AI 返回 HTTP 402，通常是 API 余额不足。
+- 如果要做线上公开服务，应使用后端权限和用户体系，不应开放任意本地配置接口。
+
+## 文件说明
+
+```text
+api_server.py                 # FastAPI 后端
+fullstack_web/index.html      # 前端入口
+fullstack_web/style.css       # 前端样式
+fullstack_web/app.js          # 前端交互逻辑
+一键启动前后端版.bat            # 推荐启动入口
+```
