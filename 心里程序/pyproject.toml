@@ -1,0 +1,11 @@
+[project]
+name = "life-echo"
+version = "0.1.0"
+description = "Interactive life narrative and self-reflection prototype."
+requires-python = ">=3.10"
+dependencies = [
+  "streamlit>=1.36",
+]
+
+[tool.setuptools]
+py-modules = ["app", "life_echo", "launcher"]

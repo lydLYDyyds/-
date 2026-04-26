@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>命运回响 · 本地前后端版</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <h1>命运回响</h1>
+        <p>本地前后端版 · 人设初始化 · 随机人生 · 可选大模型</p>
+      </div>
+      <nav>
+        <button data-view="home">首页</button>
+        <button data-view="settings">AI 设置</button>
+        <button data-view="guide">说明</button>
+      </nav>
+    </header>
+
+    <section id="home" class="view">
+      <div class="hero">
+        <h2>把一次人生，变成一棵会变化的剧情树。</h2>
+        <p>先设定本局人设，再进入从小学到成年后的现实人生节点。每章会受人设、历史选择和随机事件影响；配置大模型后，还能生成新的选项和优化人设。</p>
+        <button id="goSetup" class="primary">开始新的人生</button>
+      </div>
+    </section>
+
+    <section id="setup" class="view hidden">
+      <article class="panel">
+        <h2>开局人设</h2>
+        <p class="muted">选择一个基础模板，或写下自定义设定。人设会影响初始状态、随机事件和后续动态选择。</p>
+        <div id="personaList" class="template-grid"></div>
+        <div class="form-grid">
+          <label>名字或代称 <input id="personaName" placeholder="例如：小林、我、阿念"></label>
+          <label>随机性
+            <select id="randomLevel">
+              <option value="low">低：更接近固定剧情</option>
+              <option value="medium" selected>中：适度波动</option>
+              <option value="high">高：更多意外和变化</option>
+            </select>
+          </label>
+        </div>
+        <label>自定义人设
+          <textarea id="personaCustom" rows="5" placeholder="例如：从小成绩不错但怕被否定；习惯照顾别人；这一局想试着更早表达真实需要。"></textarea>
+        </label>
+        <div class="actions">
+          <button id="startGame" class="primary">进入人生</button>
+          <button id="refinePersona">AI 优化人设</button>
+        </div>
+      </article>
+    </section>
+
+    <section id="game" class="view hidden">
+      <div class="game-grid">
+        <article class="panel">
+          <div id="chapterLabel" class="eyebrow"></div>
+          <h2 id="nodeTitle"></h2>
+          <p id="nodeScene" class="scene"></p>
+          <div id="nodeAnchor" class="anchor"></div>
+          <div id="randomEvent" class="event hidden"></div>
+          <h3>你会怎么选？</h3>
+          <div id="choices" class="choices"></div>
+          <div class="actions">
+            <button id="aiChoice">生成 AI 额外选择</button>
+            <button id="reloadSession">刷新当前状态</button>
+          </div>
+        </article>
+        <aside class="side">
+          <section class="panel">
+            <h3>本局人设</h3>
+            <div id="personaCard"></div>
+          </section>
+          <section class="panel">
+            <h3>资源</h3>
+            <div id="resources"></div>
+          </section>
+          <section class="panel">
+            <h3>需求</h3>
+            <div id="needs"></div>
+          </section>
+          <section class="panel">
+            <h3>路径</h3>
+            <div id="storyMap"></div>
+          </section>
+        </aside>
+      </div>
+    </section>
+
+    <section id="report" class="view hidden">
+      <article class="panel report">
+        <div class="eyebrow">终局报告</div>
+        <h2 id="endingTitle"></h2>
+        <p id="endingSummary"></p>
+        <p id="interpretation"></p>
+        <h3>显著需求</h3>
+        <p id="topNeeds"></p>
+        <h3>受伤线索</h3>
+        <p id="topWounds"></p>
+        <h3>风格摘要</h3>
+        <ul id="styleSummary"></ul>
+        <button id="restart" class="primary">再开一局</button>
+      </article>
+    </section>
+
+    <section id="settings" class="view hidden">
+      <article class="panel">
+        <h2>AI 设置</h2>
+        <p class="muted">API Key 保存在本机后端的 `life_sim_data/ai_config.json`，不会暴露在前端 JS 中。公开发布时仍建议做更严格的后端权限保护。</p>
+        <div class="form-grid">
+          <label>接口地址 <input id="aiEndpoint" value="https://api.deepseek.com/chat/completions"></label>
+          <label>模型 <input id="aiModel" value="deepseek-chat"></label>
+        </div>
+        <label>API Key <input id="aiKey" type="password" placeholder="粘贴 DeepSeek 或 OpenAI 兼容 Key"></label>
+        <div class="actions">
+          <button id="saveAI" class="primary">保存 AI 设置</button>
+          <button id="clearAI">清除 AI 设置</button>
+        </div>
+        <div id="aiStatus" class="notice"></div>
+      </article>
+    </section>
+
+    <section id="guide" class="view hidden">
+      <article class="panel">
+        <h2>使用说明</h2>
+        <p>这是面向本地运行的完整前后端版本：Python FastAPI 后端负责剧情、随机事件和大模型调用；前端只负责展示和交互。</p>
+        <ul>
+          <li>打开首页后先选择人设，再进入剧情。</li>
+          <li>每章可能出现随机状态事件，选项也可能出现本地动态选项。</li>
+          <li>配置 AI 后，可以优化人设，也可以在每章生成一条 AI 额外选择。</li>
+          <li>如果 AI 返回 402，通常是 API 余额不足。</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
